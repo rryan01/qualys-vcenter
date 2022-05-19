@@ -1,0 +1,21 @@
+---
+- name: Create a VM from a template
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - community.vmware.vmware_deploy_ovf:
+     hostname: '10.10.124.9'
+     username: 'administrator@vsphere.local'
+     password: 'HP1nvent!'
+     validate_certs: no
+     datacenter: INTEL_DC
+     esxi_hostname: 10.10.124.6
+     datastore: LOCAL_datastore-6-1
+     disk_provisioning: thin
+     ovf: /home/robert/Centos_7.8.ova
+     name: rabial
+    delegate_to: localhost
+
+
+

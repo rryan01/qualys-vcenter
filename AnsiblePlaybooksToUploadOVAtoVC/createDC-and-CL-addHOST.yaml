@@ -1,0 +1,76 @@
+---
+- name: Datacenter Creation Tool
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars: 
+   vcenterip: '10.10.4.228'
+   vcenter_hostname: 'administrator@vsphere.local'
+   vcenter_password: 'HP1nvent!'
+   new_dc_name: 'DC-1'
+   new_cl_name: 'CL-1'
+   esxi_serverip: '10.10.0.223'
+    
+  tasks:
+  - name: Creating New Datacenter
+    community.vmware.vmware_datacenter:
+     hostname: '{{ vcenterip }}'
+     username: '{{ vcenter_hostname }}'
+     password: '{{ vcenter_password }}'
+     validate_certs: no
+     datacenter_name: '{{ new_dc_name }}'
+     state: present
+    delegate_to: localhost
+  - name: sleep for two seconds
+    wait_for: 
+      delay: 2
+      timeout: 0
+  - name: Create Cluster
+    community.vmware.vmware_cluster:
+     hostname: '{{ vcenterip }}'
+     username: '{{ vcenter_hostname }}'
+     password: '{{ vcenter_password }}'
+     validate_certs: no
+     datacenter_name: '{{ new_dc_name }}'
+     cluster_name: '{{ new_cl_name }}'
+     enable_ha: false
+     enable_drs: false
+     enable_vsan: false
+    delegate_to: localhost
+  - name: sleep for two seconds
+    wait_for: 
+      delay: 2
+      timeout: 0
+  - name: Add ESXi Host to vCenter
+    community.vmware.vmware_host:
+     hostname: '{{ vcenterip }}'
+     username: '{{ vcenter_hostname }}'
+     password: '{{ vcenter_password }}'
+     validate_certs: no
+     datacenter: '{{ new_dc_name }}'
+     cluster: '{{ new_cl_name }}'
+     esxi_hostname: '{{ esxi_serverip }}'
+     esxi_username: 'root'
+     esxi_password: 'HP1nvent!'
+     force_connection: yes
+     state: present
+    delegate_to: localhost
+  - name: sleep for ten seconds
+    wait_for: 
+      delay: 10
+      timeout: 0
+  - name: Deploy Windows 2019 Jump Server VM loaded with all software
+    community.vmware.vmware_deploy_ovf:
+      hostname: '{{ vcenter_ip }}'
+      username: '{{ vcenter_hostname }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      datacenter: '{{ new_dc_name }}'
+      esxi_hostname: '{{ esxi_serverip }}'
+      datastore: datastore1
+      disk_provisioning: thin
+      ovf: /home/robert/Documents/playbooks/runbook1_Create-DC-CL-win19Jump/Wind2019JumpVM-Oct2021.ova
+      name: Win2019-JumpVM
+    delegate_to: localhost
+    
+
