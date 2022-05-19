@@ -1,7 +1,11 @@
+
+Windows Commands
 .\vcsa-deploy.exe install --acknowledge-ceip --accept-eula --no-esx-ssl-verify -v .\embedded_vCSA_on_ESXi.json
 
 .\vcsa-deploy.exe install --acknowledge-ceip --accept-eula --no-esx-ssl-verify -v .\embedded_vCSA_on_vc.json
 
+Linux Commands:
+/Full_ISO_7.0.3/vcsa-cli-installer/lin64/vcsa-deploy install --acknowledge-ceip --accept-eula --no-esx-ssl-verify -v /Full_ISO_7.0.3/vcsa-cli-installer/lin64/embedded_vCSA_on_VC.json
 
 
 LINKS:
