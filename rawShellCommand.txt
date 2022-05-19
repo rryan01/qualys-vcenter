@@ -1,0 +1,1 @@
+.\vcsa-deploy.exe install --acknowledge-ceip --accept-eula --no-esx-ssl-verify -v .\embedded_vCSA_on_ESXi.json
