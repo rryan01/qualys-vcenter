@@ -1,3 +1,10 @@
 .\vcsa-deploy.exe install --acknowledge-ceip --accept-eula --no-esx-ssl-verify -v .\embedded_vCSA_on_ESXi.json
 
 .\vcsa-deploy.exe install --acknowledge-ceip --accept-eula --no-esx-ssl-verify -v .\embedded_vCSA_on_vc.json
+
+
+
+LINKS:
+--------------------
+https://docs.vmware.com/en/VMware-vSphere/7.0/vsphere-vcenter-server-70-installation-guide.pdf
+
