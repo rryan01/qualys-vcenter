@@ -1,0 +1,16 @@
+---
+- hosts: all
+  gather_facts: false
+  connection: network_cli
+  become: yes
+  become_method: enable
+  tasks:
+    - name: Set MTU to 9000- enable all ports- write to memory
+      onyx_config:
+        commands:
+          - interface ethernet 1/1-1/30
+          - no shutdown
+          - speed 100000 force
+          - mtu 9000 force
+          - exit
+          - write memory

@@ -1,0 +1,6 @@
+[mellanoxswitch]
+10.10.252.90
+
+[mellanoxswitch:vars]
+ansible_network_os=onyx
+

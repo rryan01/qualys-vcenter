@@ -1,0 +1,35 @@
+---
+- hosts: all
+  gather_facts: false
+  connection: network_cli
+  become: yes
+  become_method: enable
+  tasks:
+    - name: Make Splitter ports back into regular QSFP ports
+      onyx_config:
+        commands: interface ethernet {{ item }} module-type qsfp force
+      loop:
+        - 1/19/1
+        - 1/21/1
+        - 1/23/1
+    - name: Save the config
+      onyx_config:
+        commands:
+          - write memory
+
+
+
+
+#          - interface ethernet "{{ item }}" module-type qsfp-split-4 force
+#          - module-type qsfp-split-4 force
+#          - no shutdown
+#          - speed 40000 force
+#          - mtu 1500 force
+#          - exit
+#          - write memory
+#          loop:
+#           - 1/17
+#           - 1/19
+#    - name: Show version of os on remote switch
+#      onyx_config:
+#       commands:
