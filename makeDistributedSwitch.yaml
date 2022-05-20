@@ -1,0 +1,67 @@
+---
+- name: Datacenter Creation Tool
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars: 
+   vcenterip: '10.10.5.186'
+   vcenter_hostname: 'administrator@vsphere.local'
+   vcenter_password: 'HP1nvent!'
+   esxi_user: 'root'
+   esxi_pass: 'HP1nvent!'
+   new_dc_name: 'QualysDC'
+   new_cl_name: 'QualysCL'
+   esxi_serverip1: '10.10.0.180'
+   esxi_serverip2: '10.10.0.181'
+   esxi_serverip3: '10.10.0.182'
+    
+  tasks:
+  - name: Create dvSwitch
+    community.vmware.vmware_dvswitch:
+      hostname: '{{ vcenterip }}'
+      username: '{{ vcenter_hostname }}'
+      password: '{{ vcenter_password }}'
+      datacenter: '{{ new_dc_name }}'
+      switch: dvSwitch
+      version: 7.0.2
+      mtu: 9000
+      uplink_quantity: 2
+      discovery_protocol: lldp
+      discovery_operation: both
+      state: present
+      validate_certs: no
+    delegate_to: localhost
+  # - name: Add Host to dVS
+  #   community.vmware.vmware_dvs_host:
+  #     hostname: '{{ item }}'
+  #     username: '{{ esxi_user }}'
+  #     password: '{{ esxi_pass }}'
+  #     esxi_hostname: '{{ esxi_serverip1 }}'
+  #     switch_name: dvSwitch
+  #     vmnics:
+  #         - vmnic4
+  #         - vmnic5
+  #     state: present
+  #     validate_certs: no
+  #   with_items:
+  #    - '10.10.0.180'
+  #    - '10.10.0.181'
+  #    - '10.10.0.182'
+  #   delegate_to: localhost
+  - name: Add Host to dVS
+    local_action:
+      module: vmware_dvs_host
+      hostname: '{{ vcenterip }}'
+      username: '{{ vcenter_hostname }}'
+      password: '{{ vcenter_password }}'
+      esxi_hostname: '{{ item }}'
+      switch_name: dvSwitch
+      vmnics:
+          - vmnic4
+          - vmnic5
+      state: present
+      validate_certs: no
+    with_items:
+      - '10.10.0.180'
+      - '10.10.0.181'
+      - '10.10.0.182'
