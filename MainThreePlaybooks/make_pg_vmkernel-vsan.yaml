@@ -1,0 +1,81 @@
+---
+- name: Make vSAN VM Kernel Port on Distributed switch
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars: 
+   vcenterip: '10.10.5.186'
+   vcenter_hostname: 'administrator@vsphere.local'
+   vcenter_password: 'HP1nvent!'
+   esxi_user: 'root'
+   esxi_pass: 'HP1nvent!'
+   new_dc_name: 'QualysDC'
+   new_cl_name: 'QualysCL'
+   esxi_serverip1: '10.10.0.180'
+   esxi_serverip2: '10.10.0.181'
+   esxi_serverip3: '10.10.0.182'
+  tasks: 
+  - name: Create no-vlan portgroup
+    community.vmware.vmware_dvs_portgroup:
+      validate_certs: no
+      hostname: '{{ vcenterip }}'
+      username: '{{ vcenter_hostname }}'
+      password: '{{ vcenter_password }}'
+      portgroup_name: vSANpg
+      switch_name: dvSwitch
+      vlan_id: 0
+      num_ports: 120
+      port_binding: static
+      state: present
+    delegate_to: localhost
+  -  name: Add vMotion vmkernel port with vMotion TCP/IP stack
+     community.vmware.vmware_vmkernel:
+        validate_certs: no
+        hostname: '{{ vcenterip }}'
+        username: '{{ vcenter_hostname }}'
+        password: '{{ vcenter_password }}'
+        esxi_hostname: '{{ esxi_serverip1 }}'
+        dvswitch_name: dvSwitch
+        portgroup_name: vSANpg
+        enable_vsan: yes
+        network:
+          type: 'static'
+          ip_address: 10.10.1.180
+          subnet_mask: 255.255.0.0
+          tcpip_stack: default
+        state: present
+     delegate_to: localhost
+  -  name: Add vMotion vmkernel port with vMotion TCP/IP stack
+     community.vmware.vmware_vmkernel:
+        validate_certs: no
+        hostname: '{{ vcenterip }}'
+        username: '{{ vcenter_hostname }}'
+        password: '{{ vcenter_password }}'
+        esxi_hostname: '{{ esxi_serverip2 }}'
+        dvswitch_name: dvSwitch
+        portgroup_name: vSANpg
+        enable_vsan: yes
+        network:
+          type: 'static'
+          ip_address: 10.10.1.181
+          subnet_mask: 255.255.0.0
+          tcpip_stack: default
+        state: present
+     delegate_to: localhost
+  -  name: Add vMotion vmkernel port with vMotion TCP/IP stack
+     community.vmware.vmware_vmkernel:
+        validate_certs: no
+        hostname: '{{ vcenterip }}'
+        username: '{{ vcenter_hostname }}'
+        password: '{{ vcenter_password }}'
+        esxi_hostname: '{{ esxi_serverip3 }}'
+        dvswitch_name: dvSwitch
+        portgroup_name: vSANpg
+        enable_vsan: yes
+        network:
+          type: 'static'
+          ip_address: 10.10.1.182
+          subnet_mask: 255.255.0.0
+          tcpip_stack: default
+        state: present
+     delegate_to: localhost
